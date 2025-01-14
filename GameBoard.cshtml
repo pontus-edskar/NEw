@@ -1,0 +1,86 @@
+﻿@model List<Project.Models.GameStatusModel>
+
+@{
+    ViewBag.Title = "Memory Game";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var gameBoard = Model ?? new List<Project.Models.GameStatusModel>();
+    var playerCount = ViewBag.PlayerCount ?? 0;
+}
+
+<h2>Memory Game</h2>
+<p>Total cards: @gameBoard.Count</p>
+<p>Players in game: @playerCount</p> <!-- Display the number of players -->
+<!-- Render the game board -->
+<div id="game-board">
+    @Html.Partial("PartialGameBoard", Model)
+</div>
+
+<script>
+    let firstCard = null;
+    let secondCard = null;
+    let isProcessing = false; // Prevent additional actions while processing
+
+        function flipCard(button) {
+        const cardId = button.getAttribute('data-id');
+        fetch(`/Home/FlipCard/${cardId}`, { method: 'POST' })
+            .then(response => response.text())
+            .then(html => {
+                document.getElementById('game-board').innerHTML = html;
+            });
+    }
+
+    // This function sends the flip action to the server
+    function flipCardOnServer(cardId) {
+        fetch(`/Home/FlipCard/${cardId}`, {
+            method: 'POST'
+        })
+        .then(response => response.text())
+        .then(html => {
+            // Update the game board with the updated state
+            document.getElementById('game-board').innerHTML = html;
+        });
+    }
+
+    function compareCards() {
+        if (firstCard && secondCard) {
+            fetch(`/Home/CompareCards?firstCardId=${firstCard}&secondCardId=${secondCard}`, {
+                method: 'POST'
+            })
+            .then(response => response.text())
+            .then(html => {
+                // Update the game board after comparing the cards
+                document.getElementById('game-board').innerHTML = html;
+
+                // Reset the flipped card tracking
+                firstCard = null;
+                secondCard = null;
+                isProcessing = false; // Allow further clicks
+            });
+        }
+    }
+</script>
+
+<style>
+    .card-button {
+        width: 100px;
+        height: 100px;
+        background-color: #ccc;
+        border: 1px solid #aaa;
+        cursor: pointer;
+        font-size: 16px;
+        font-weight: bold;
+    }
+
+        .card-button.hidden span {
+            visibility: hidden;
+        }
+
+        .card-button.visible, .card-button.matched {
+            background-color: #add8e6; /* Light blue for flipped or matched cards */
+            cursor: default;
+        }
+
+        .card-button.matched {
+            border: 2px solid green;
+        }
+</style>

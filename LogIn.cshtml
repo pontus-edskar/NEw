@@ -1,0 +1,23 @@
+﻿@model Project.Models.UserModel
+
+@{
+    ViewData["Title"] = "Login";
+}
+
+<h1>Login</h1>
+
+<form asp-action="Login">
+
+    <label>User name:</label>
+    <br />
+    <input asp-for="Name" type="text" />
+    <br />
+    <br />
+    <label>Password:</label>
+    <br />
+    <input asp-for="Password" type="text" />
+    <br />
+    <br />
+    <input type="submit" value="Submit" />
+
+</form>

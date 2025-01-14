@@ -1,0 +1,25 @@
+﻿@model List<Project.Models.GameSessionModel>
+
+<h1>Select a Game</h1>
+
+@if (Model != null && Model.Any())
+{
+    <form asp-action="JoinGame" method="post">
+        <div class="form-group">
+            <label for="gameId">Select Game:</label>
+            <select name="gameId" id="gameId" class="form-control">
+                @foreach (var game in Model)
+                {
+                    <option value="@game.GameId">
+                        Game ID: @game.GameId - Created On: @game.CreatedOn.ToString("g")
+                    </option>
+                }
+            </select>
+        </div>
+        <button type="submit" class="btn btn-primary">Join Game</button>
+    </form>
+}
+else
+{
+    <p>No available games to join. Please wait for a game to be created.</p>
+}
